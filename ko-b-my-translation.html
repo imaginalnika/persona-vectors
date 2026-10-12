@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>페르소나 벡터 — 영어 문서 번역</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Atkinson+Hyperlegible+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232c4cd0'/%3E%3Cpath d='M8 22 L16 8 L24 22' stroke='%23f7f7f4' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='16' cy='18' r='2' fill='%23f7f7f4'/%3E%3C/svg%3E"/>
+<style>
+:root{
+  --bg:#f7f7f4; --surface:#ffffff; --border:#e3e3dc; --border-bright:#8e8e8a;
+  --text:#17191c; --text-dim:#575c63; --accent:#2c4cd0; --ok:#1d7443; --warn:#836000; --risk:#b3301d; --info:#1b6a94;
+  --node-top:var(--surface); --lift:rgb(18 22 20 / .12); --halo:22%;
+  --accent-dim:color-mix(in srgb, var(--accent) 14%, transparent);
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.5rem; --s-6:2rem; --s-7:3rem; --s-8:4rem;
+  --font-display:"Newsreader",Georgia,serif; --font-body:"Atkinson Hyperlegible Next",system-ui,sans-serif; --font-mono:"Atkinson Hyperlegible Mono",ui-monospace,monospace;
+  --measure:65ch; --container:64rem;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111316; --surface:#181b1f; --border:#262a30; --border-bright:#62676c;
+    --text:#e8e8e3; --text-dim:#9ba1a9; --accent:#93a6ff; --ok:#6cc492; --warn:#e3b94d; --risk:#f0806b; --info:#6fb8dc;
+    --node-top:color-mix(in srgb, var(--text) 7%, var(--surface)); --lift:rgb(0 0 0 / .45); --halo:32%;
+  }
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.55;font-synthesis:none;font-kerning:normal}
+.wrap{max-width:var(--container);margin:0 auto;padding:var(--s-7) var(--s-5) var(--s-8)}
+.kicker{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 var(--s-2)}
+h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4vw,2.75rem);line-height:1.1;letter-spacing:-0.03em;margin:0 0 var(--s-3);text-wrap:balance}
+.deck{max-width:50ch;color:var(--text-dim);font-size:1.05rem;margin:0 0 var(--s-6)}
+nav.toc{display:flex;flex-wrap:wrap;gap:var(--s-3);margin:0 0 var(--s-7);padding:var(--s-3) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:sticky;top:0;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(6px);z-index:2}
+nav.toc a{color:var(--text-dim);text-decoration:none;font-size:.85rem}
+nav.toc a:hover,nav.toc a:focus{color:var(--accent);text-decoration:underline}
+section{margin:var(--s-8) 0}
+.sec-label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin:0 0 var(--s-2)}
+h2{font-family:var(--font-display);font-weight:600;font-size:1.65rem;letter-spacing:-0.01em;margin:0 0 var(--s-4);text-wrap:balance}
+p{max-width:var(--measure);margin:0 0 var(--s-4)}
+figure{margin:0 0 var(--s-6);padding:0}
+figcaption{font-size:.9rem;color:var(--text-dim);margin-top:var(--s-3);max-width:var(--measure)}
+figcaption .fig{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);margin-right:.5rem}
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:var(--s-5);box-shadow:0 1px 0 var(--lift);background-image:radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--border-bright) 35%, transparent) 1px, transparent 0);background-size:16px 16px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4);margin:0 0 var(--s-6)}
+@media (max-width:800px){.grid3{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);padding:var(--s-4);min-width:0}
+.card h3{font-family:var(--font-display);font-size:1.15rem;margin:0 0 var(--s-2)}
+.card p{font-size:.92rem;margin:0;color:var(--text-dim)}
+.chip{display:inline-block;font-family:var(--font-mono);font-size:.7rem;padding:.15rem .45rem;border:1px solid var(--border-bright);border-radius:999px;color:var(--text-dim)}
+.chip.ok{border-color:var(--ok);color:var(--ok)}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.chip.risk{border-color:var(--risk);color:var(--risk)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:0 0 var(--s-5)}
+th,td{text-align:left;padding:var(--s-3);border-bottom:1px solid var(--border);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);font-weight:400}
+td a{color:var(--accent)}
+.kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-4);margin:0 0 var(--s-6)}
+@media (max-width:900px){.kpi{grid-template-columns:repeat(2,1fr)}}
+.kpi .n{font-family:var(--font-display);font-size:2rem;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;line-height:1}
+.kpi .l{font-size:.8rem;color:var(--text-dim);margin-top:var(--s-1)}
+.steps{counter-reset:step;list-style:none;padding:0;margin:0 0 var(--s-5);max-width:var(--measure)}
+.steps li{position:relative;padding-left:2.5rem;margin-bottom:var(--s-4)}
+.steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-family:var(--font-mono);font-size:.75rem;display:flex;align-items:center;justify-content:center}
+.note{border-left:3px solid var(--accent);padding:var(--s-3) var(--s-4);background:var(--accent-dim);max-width:var(--measure);margin:0 0 var(--s-5)}
+footer{margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--border);color:var(--text-dim);font-size:.85rem}
+code{font-family:var(--font-mono);font-size:.85em;background:color-mix(in srgb, var(--border) 60%, transparent);padding:.1em .35em;border-radius:2px}
+ul.plain{max-width:var(--measure);padding-left:1.2rem;margin:0 0 var(--s-4)}
+ul.plain li{margin-bottom:var(--s-2)}
+a{color:var(--accent)}
+
+body{word-break:keep-all}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<p class="kicker">연구 브리프 · 2026-10-12 JST</p>
+<h1>페르소나 벡터는 새 파인튜닝 없이도 인스트럭트 모델을 조향한다</h1>
+<p class="deck">악함·아첨·환각 같은 성향의 활성화 공간 방향 — Anthropic 추출법, Vogel 제어 벡터와의 관계, 먼저 시도할 ~8B–27B 인스트럭트 모델.</p>
+<nav class="toc"><a href="#answer">답</a><a href="#extract">추출</a><a href="#use">사용</a><a href="#vogel">Vogel</a><a href="#models">모델</a><a href="#plan">계획</a><a href="#sources">출처</a></nav>
+<section id="answer">
+<p class="sec-label">01 · 첫 화면</p>
+<h2>성향과 반성향 활성화를 빼고, 조향하거나 백신처럼 쓴다</h2>
+<p>Anthropic 자동 파이프라인은 성향 설명을 레이어별 평균차 벡터로 바꾼 뒤 감시·조향·파인튜닝 중 예방 조향에 쓴다. 논문 데모 모델은 7B/8B 인스트럭트 두 종. 예방 조향의 MMLU 손실은 실험상 거의 없다.</p>
+</section>
+<section id="extract">
+<p class="sec-label">02 · 메커니즘</p>
+<h2>응답 토큰 평균차가 프롬프트 마지막 토큰보다 낫다</h2>
+<ol class="steps">
+  <li>자연어로 성향을 기술한다. 파이프라인이 반대 시스템 프롬프트와 평가 질문을 만든다.</li>
+  <li>응답 중 residual stream을 모으고 <strong>응답 토큰</strong>을 평균한다.</li>
+  <li>각 레이어에서 <code>v_ℓ = mean(성향) − mean(반성향)</code>.</li>
+  <li>조향 효과로 레이어를 고른다(부록 B.4). Qwen: 악함·아첨 L20, 환각 L16. Llama: 세 성향 모두 L16.</li>
+</ol>
+<div class="note"><code>/workspace</code>의 기존 작업은 <strong>베이스</strong> 모델 스카우팅이다. 여기는 <strong>인스트럭트/캐릭터</strong> — 보완이지 중복이 아니다.</div>
+</section>
+<section id="use">
+<p class="sec-label">03 · 제어</p>
+<h2>사후 빼기는 성향을 줄이고, 학습 중 더하기는 성향 유입을 막는다</h2>
+<div class="grid3">
+  <div class="card"><span class="chip">감시</span><h3>투영이 일찍 켜진다</h3><p>활성화와 <code>v</code>의 내적이 성향 답 전에 커진다.</p></div>
+  <div class="card"><span class="chip warn">추론</span><h3>±계수 조향</h3><p>더하면 성향↑, 빼면 성향↓. 레포 모드: response/prompt/all. 강한 사후 빼기는 MMLU를 깎을 수 있다.</p></div>
+  <div class="card"><span class="chip ok">학습</span><h3>예방 “백신”</h3><p>파인튜닝 중 나쁜 성향 벡터를 <strong>더한다</strong>. 더러운 데이터에 맞춰 성격이 바뀔 필요가 줄어든다. 다중 레이어가 더 강하다.</p></div>
+</div>
+<p>학습 샘플의 <strong>projection difference</strong>는 파인튜닝 후 성향 표현을 예측한다. CAFT는 악함/아첨에 강하고 환각에는 약하다.</p>
+</section>
+<section id="vogel">
+<p class="sec-label">04 · 형제 방법</p>
+<h2>Vogel 제어 벡터: 같은 가족, PCA와 실험적 성향</h2>
+<p>Theia Vogel(@voooooogel)은 <code>repeng</code>와 2024 Mistral “acid trip” 글로 제어 벡터를 쉽게 만들었다. 방법: 대조쌍 → 상대 은닉상태 → 레이어별 단일성분 PCA → 추론 시 계수 가산.</p>
+<ul class="plain">
+  <li>2026-10-01: 페르소나/개념/믿음/과제 벡터는 한 가족(평균차, PCA, SAE 등).</li>
+  <li>평균차는 공유 방해물을 상쇄한다.</li>
+  <li>실패: 과대 계수→붕괴, 얽힘, 프롬프트/샘플러로도 재현 가능한 효과 — 대조군 필수.</li>
+</ul>
+</section>
+<section id="models">
+<p class="sec-label">05 · 숏리스트</p>
+<h2>인스트럭트 후보 넷(Gemma 포함). Qwen3.8-27B와 Bonsai는 둘 다 있다</h2>
+<p><strong>Qwen3.8-27B</strong>(<a href="https://huggingface.co/Qwen/Qwen3.8-27B">HF</a>)는 ~27.8B 포스트트레인 VLM(Apache-2.0). “3.8”은 시리즈명이지 3.8B가 아니다. <strong>Bonsai</strong>는 Prism ML의 삼진 양자화(<a href="https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf">GGUF</a>). 로컬 채팅엔 좋으나 활성화 연구 1순위로 비추천.</p>
+<table>
+<thead><tr><th>선택</th><th>모델</th><th>크기</th><th>이유</th><th>GPU(BF16)</th></tr></thead>
+<tbody>
+<tr><td><span class="chip ok">A</span></td><td><a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</a></td><td>~7.6B</td><td>논문 기준선; Apache-2.0; 알려진 레이어</td><td>~16&nbsp;GB</td></tr>
+<tr><td><span class="chip ok">B</span></td><td><a href="https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B">NousResearch/Hermes-3-Llama-3.1-8B</a></td><td>~8.0B</td><td>인스트럭트+롤플레이; 캐릭터 각도</td><td>~16–20&nbsp;GB</td></tr>
+<tr><td><span class="chip warn">C</span></td><td><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen/Qwen3.8-27B</a></td><td>~27.8B</td><td>최신 밀집 포스트트레인; 연산 부담</td><td>~54&nbsp;GB+; FP8/AWQ면 24–48&nbsp;GB</td></tr>
+<tr><td><span class="chip ok">D</span></td><td><a href="https://huggingface.co/google/gemma-3-12b-it">google/gemma-3-12b-it</a></td><td>~12.2B</td><td>최신 Gemma 3 인스트럭트; 기존 페르소나 벡터 산출물; 게이트된 Gemma 라이선스</td><td>~24&nbsp;GB BF16; AWQ ~12–16&nbsp;GB</td></tr>
+</tbody>
+</table>
+<p>논문은 <a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.1-8B-Instruct</a>도 썼다. RP 대안: <a href="https://huggingface.co/vicgalle/Humanish-Roleplay-Llama-3.1-8B">Humanish-Roleplay-Llama-3.1-8B</a>.</p>
+<p><strong>Gemma Scope:</strong> DeepMind의 <em>Gemma 2</em>용 공개 JumpReLU SAE 모음(<a href="https://huggingface.co/google/gemma-scope-9b-it-res">gemma-scope-9b-it-res</a> 포함). 베이스 SAE는 IT로 잘 전이된다. SAE 작업은 <a href="https://huggingface.co/google/gemma-2-9b-it">gemma-2-9b-it</a>(~9.2B)과 짝지으라. Gemma 3에는 아직 전체 Scope가 없다. 스트레치: <a href="https://huggingface.co/google/gemma-3-27b-it">gemma-3-27b-it</a>(~27.4B).</p>
+
+</section>
+<section id="plan">
+<p class="sec-label">06 · 다음</p>
+<h2>A에서 논문 벡터 재현, 이어서 B에서 캐릭터 성향</h2>
+<ol class="steps">
+  <li><code>safety-research/persona_vectors</code>로 Qwen2.5-7B-Instruct에서 evil/sycophancy/hallucination을 추출하고 레이어를 맞춘다.</li>
+  <li>Hermes-3-8B에 충성·연극성·캐릭터 내 거절 성향을 반복한다.</li>
+  <li><strong>gemma-3-12b-it</strong>에 같은 파이프라인을 돌린다(HF Gemma 게이트). SAE 곁가지: gemma-2-9b-it + Gemma Scope.</li>
+  <li>대형 GPU가 비면 Qwen3.8-27B. 최적 레이어는 다를 수 있다.</li>
+  <li>벡터 피팅에는 Bonsai를 쓰지 않는다.</li>
+</ol>
+</section>
+<section id="sources">
+<p class="sec-label">07 · 출처</p>
+<h2>주요 링크</h2>
+<ul class="plain">
+  <li>Anthropic <a href="https://www.anthropic.com/research/persona-vectors">블로그</a> · <a href="https://arxiv.org/abs/2507.21509">arXiv:2507.21509</a> · <a href="https://github.com/safety-research/persona_vectors">코드</a></li>
+  <li>Vogel <a href="https://vgel.me/posts/representation-engineering/">포스트</a> · <a href="https://x.com/voooooogel/status/2105793927035093490">2026-10-01</a> · <code>repeng</code></li>
+  <li>스킬: <a href="https://github.com/nicobailon/visual-explainer">nicobailon/visual-explainer</a></li>
+</ul>
+</section>
+
+<footer>Josh Cho용 · ko-b 내 번역 · 미발행</footer>
+</main>
+</body>
+</html>

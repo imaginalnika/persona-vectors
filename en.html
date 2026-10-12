@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Persona Vectors on Instruct Models — Explainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Atkinson+Hyperlegible+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232c4cd0'/%3E%3Cpath d='M8 22 L16 8 L24 22' stroke='%23f7f7f4' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='16' cy='18' r='2' fill='%23f7f7f4'/%3E%3C/svg%3E"/>
+<style>
+:root{
+  --bg:#f7f7f4; --surface:#ffffff; --border:#e3e3dc; --border-bright:#8e8e8a;
+  --text:#17191c; --text-dim:#575c63; --accent:#2c4cd0; --ok:#1d7443; --warn:#836000; --risk:#b3301d; --info:#1b6a94;
+  --node-top:var(--surface); --lift:rgb(18 22 20 / .12); --halo:22%;
+  --accent-dim:color-mix(in srgb, var(--accent) 14%, transparent);
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.5rem; --s-6:2rem; --s-7:3rem; --s-8:4rem;
+  --font-display:"Newsreader",Georgia,serif; --font-body:"Atkinson Hyperlegible Next",system-ui,sans-serif; --font-mono:"Atkinson Hyperlegible Mono",ui-monospace,monospace;
+  --measure:65ch; --container:64rem;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111316; --surface:#181b1f; --border:#262a30; --border-bright:#62676c;
+    --text:#e8e8e3; --text-dim:#9ba1a9; --accent:#93a6ff; --ok:#6cc492; --warn:#e3b94d; --risk:#f0806b; --info:#6fb8dc;
+    --node-top:color-mix(in srgb, var(--text) 7%, var(--surface)); --lift:rgb(0 0 0 / .45); --halo:32%;
+  }
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.55;font-synthesis:none;font-kerning:normal}
+.wrap{max-width:var(--container);margin:0 auto;padding:var(--s-7) var(--s-5) var(--s-8)}
+.kicker{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 var(--s-2)}
+h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4vw,2.75rem);line-height:1.1;letter-spacing:-0.03em;margin:0 0 var(--s-3);text-wrap:balance}
+.deck{max-width:50ch;color:var(--text-dim);font-size:1.05rem;margin:0 0 var(--s-6)}
+nav.toc{display:flex;flex-wrap:wrap;gap:var(--s-3);margin:0 0 var(--s-7);padding:var(--s-3) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:sticky;top:0;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(6px);z-index:2}
+nav.toc a{color:var(--text-dim);text-decoration:none;font-size:.85rem}
+nav.toc a:hover,nav.toc a:focus{color:var(--accent);text-decoration:underline}
+section{margin:var(--s-8) 0}
+.sec-label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin:0 0 var(--s-2)}
+h2{font-family:var(--font-display);font-weight:600;font-size:1.65rem;letter-spacing:-0.01em;margin:0 0 var(--s-4);text-wrap:balance}
+p{max-width:var(--measure);margin:0 0 var(--s-4)}
+figure{margin:0 0 var(--s-6);padding:0}
+figcaption{font-size:.9rem;color:var(--text-dim);margin-top:var(--s-3);max-width:var(--measure)}
+figcaption .fig{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);margin-right:.5rem}
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:var(--s-5);box-shadow:0 1px 0 var(--lift);background-image:radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--border-bright) 35%, transparent) 1px, transparent 0);background-size:16px 16px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4);margin:0 0 var(--s-6)}
+@media (max-width:800px){.grid3{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);padding:var(--s-4);min-width:0}
+.card h3{font-family:var(--font-display);font-size:1.15rem;margin:0 0 var(--s-2)}
+.card p{font-size:.92rem;margin:0;color:var(--text-dim)}
+.chip{display:inline-block;font-family:var(--font-mono);font-size:.7rem;padding:.15rem .45rem;border:1px solid var(--border-bright);border-radius:999px;color:var(--text-dim)}
+.chip.ok{border-color:var(--ok);color:var(--ok)}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.chip.risk{border-color:var(--risk);color:var(--risk)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:0 0 var(--s-5)}
+th,td{text-align:left;padding:var(--s-3);border-bottom:1px solid var(--border);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);font-weight:400}
+td a{color:var(--accent)}
+.kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-4);margin:0 0 var(--s-6)}
+@media (max-width:900px){.kpi{grid-template-columns:repeat(2,1fr)}}
+.kpi .n{font-family:var(--font-display);font-size:2rem;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;line-height:1}
+.kpi .l{font-size:.8rem;color:var(--text-dim);margin-top:var(--s-1)}
+.steps{counter-reset:step;list-style:none;padding:0;margin:0 0 var(--s-5);max-width:var(--measure)}
+.steps li{position:relative;padding-left:2.5rem;margin-bottom:var(--s-4)}
+.steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-family:var(--font-mono);font-size:.75rem;display:flex;align-items:center;justify-content:center}
+.note{border-left:3px solid var(--accent);padding:var(--s-3) var(--s-4);background:var(--accent-dim);max-width:var(--measure);margin:0 0 var(--s-5)}
+footer{margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--border);color:var(--text-dim);font-size:.85rem}
+code{font-family:var(--font-mono);font-size:.85em;background:color-mix(in srgb, var(--border) 60%, transparent);padding:.1em .35em;border-radius:2px}
+ul.plain{max-width:var(--measure);padding-left:1.2rem;margin:0 0 var(--s-4)}
+ul.plain li{margin-bottom:var(--s-2)}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main class="wrap">
+<p class="kicker">Research brief · 2026-10-12 JST</p>
+<h1>Persona vectors steer instruct models without a new finetune</h1>
+<p class="deck">Directions in activation space for traits like evil, sycophancy, and hallucination — how Anthropic extracts them, how Vogel’s control vectors relate, and which ~8B–27B instruct models to try first.</p>
+<nav class="toc" aria-label="Sections">
+  <a href="#answer">Answer</a>
+  <a href="#extract">Extract</a>
+  <a href="#use">Use</a>
+  <a href="#vogel">Vogel</a>
+  <a href="#models">Models</a>
+  <a href="#plan">Plan</a>
+  <a href="#sources">Sources</a>
+</nav>
+<section id="answer">
+<p class="sec-label">01 · First viewport</p>
+<h2>Subtract trait vs anti-trait activations; steer or vaccinate</h2>
+<figure>
+  <div class="stage">
+    <svg viewBox="0 0 920 280" role="img" aria-label="Pipeline from trait text to three uses">
+      <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+      <g font-family="Atkinson Hyperlegible Mono, monospace" font-size="12" fill="currentColor">
+        <rect x="20" y="90" width="150" height="70" rx="4" fill="var(--surface)" stroke="var(--border-bright)" stroke-width="1.5"/>
+        <text x="95" y="120" text-anchor="middle" font-family="Newsreader, serif" font-size="15">Trait text</text>
+        <text x="95" y="142" text-anchor="middle" fill="var(--text-dim)">“evil” + description</text>
+        <line x1="170" y1="125" x2="210" y2="125" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow)" color="var(--accent)"/>
+        <rect x="220" y="70" width="200" height="110" rx="4" fill="var(--surface)" stroke="var(--border-bright)" stroke-width="1.5"/>
+        <text x="320" y="100" text-anchor="middle" font-family="Newsreader, serif" font-size="15">Contrastive prompts</text>
+        <text x="320" y="122" text-anchor="middle" fill="var(--text-dim)">+ trait  /  − trait</text>
+        <text x="320" y="148" text-anchor="middle" fill="var(--text-dim)">response-token mean</text>
+        <line x1="420" y1="125" x2="460" y2="125" stroke="var(--accent)" stroke-width="1.75" marker-end="url(#arrow)" color="var(--accent)"/>
+        <rect x="470" y="85" width="160" height="80" rx="4" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="550" y="120" text-anchor="middle" font-family="Newsreader, serif" font-size="15" fill="var(--accent)">v = μ₊ − μ₋</text>
+        <text x="550" y="144" text-anchor="middle" fill="var(--text-dim)">per layer → pick best</text>
+        <line x1="630" y1="100" x2="680" y2="55" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrow)" color="var(--accent)"/>
+        <line x1="630" y1="125" x2="680" y2="125" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrow)" color="var(--accent)"/>
+        <line x1="630" y1="150" x2="680" y2="195" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrow)" color="var(--accent)"/>
+        <rect x="690" y="30" width="210" height="44" rx="3" fill="var(--surface)" stroke="var(--border-bright)"/>
+        <text x="795" y="57" text-anchor="middle">Monitor projection</text>
+        <rect x="690" y="103" width="210" height="44" rx="3" fill="var(--surface)" stroke="var(--border-bright)"/>
+        <text x="795" y="130" text-anchor="middle">Steer ± coef · v</text>
+        <rect x="690" y="176" width="210" height="44" rx="3" fill="var(--surface)" stroke="var(--border-bright)"/>
+        <text x="795" y="203" text-anchor="middle">Preventative “vaccine”</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption><span class="fig">Fig. 1</span>Anthropic’s pipeline: trait description → contrastive prompts → mean-difference vector → monitor, steer, or preventatively steer.</figcaption>
+</figure>
+<div class="kpi">
+  <div><div class="n">2</div><div class="l">Paper demo models (7B / 8B instruct)</div></div>
+  <div><div class="n">3</div><div class="l">Primary traits: evil · sycophancy · hallucination</div></div>
+  <div><div class="n">L20</div><div class="l">Best layer for evil/sycophancy on Qwen2.5-7B</div></div>
+  <div><div class="n">≈0</div><div class="l">MMLU hit from preventative steering (paper)</div></div>
+</div>
+</section>
+<section id="extract">
+<p class="sec-label">02 · Mechanism</p>
+<h2>Response-token mean difference beats prompt-last</h2>
+<ol class="steps">
+  <li><strong>Describe the trait</strong> in natural language. The pipeline builds opposing system prompts and eval questions.</li>
+  <li><strong>Collect residual-stream activations</strong> while the model answers. Average over <strong>response tokens</strong> (stronger than last prompt token).</li>
+  <li><strong>Subtract means:</strong> <code>v_ℓ = mean(trait) − mean(anti-trait)</code> at each layer ℓ.</li>
+  <li><strong>Pick the layer</strong> by steering effectiveness (Appendix B.4). Paper picks: Qwen L20 (evil/sycophancy), L16 (hallucination); Llama L16 for all three.</li>
+</ol>
+<div class="note">Prior Josh work in <code>/workspace</code> scouted <strong>base</strong> models only. Persona-vector work here targets <strong>instruct / character</strong> checkpoints — complementary, not a duplicate.</div>
+</section>
+<section id="use">
+<p class="sec-label">03 · Control</p>
+<h2>Post-hoc subtract cleans traits; training-time add prevents them</h2>
+<div class="grid3">
+  <div class="card"><span class="chip">Monitor</span><h3>Projection lights up early</h3><p>Dot product of activations with <code>v</code> rises before trait-laden answers. Useful mid-conversation and across training.</p></div>
+  <div class="card"><span class="chip warn">Inference</span><h3>Steer ± coef · v</h3><p>Add for more trait, subtract for less. Repo modes: response / prompt / all. Strong post-hoc subtract can cost MMLU.</p></div>
+  <div class="card"><span class="chip ok">Training</span><h3>Preventative “vaccine”</h3><p>During finetune, <strong>add</strong> the bad-trait vector so the model need not shift personality to fit dirty data. Multi-layer helps.</p></div>
+</div>
+<figure>
+  <div class="stage">
+    <svg viewBox="0 0 920 200" role="img" aria-label="Inference subtract vs preventative add">
+      <g font-family="Atkinson Hyperlegible Mono, monospace" font-size="12" fill="currentColor">
+        <text x="40" y="30" font-family="Newsreader, serif" font-size="16">Inference-time</text>
+        <text x="480" y="30" font-family="Newsreader, serif" font-size="16">Preventative (train)</text>
+        <rect x="40" y="50" width="360" height="120" rx="4" fill="var(--surface)" stroke="var(--border-bright)"/>
+        <text x="60" y="85" fill="var(--text-dim)">after SFT on dirty data</text>
+        <text x="60" y="120" font-family="Newsreader, serif" font-size="18">h ← h − α · v</text>
+        <text x="60" y="150" fill="var(--risk)">↓ trait, risk ↓ capability</text>
+        <rect x="480" y="50" width="400" height="120" rx="4" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.75"/>
+        <text x="500" y="85" fill="var(--text-dim)">during SFT on dirty data</text>
+        <text x="500" y="120" font-family="Newsreader, serif" font-size="18" fill="var(--accent)">h ← h + α · v</text>
+        <text x="500" y="150" fill="var(--ok)">limits trait drift, keeps MMLU</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption><span class="fig">Fig. 2</span>Adding the undesired persona during training (vaccine) preserves capability better than subtracting it after the fact.</figcaption>
+</figure>
+<p>Also: <strong>projection difference</strong> on training samples predicts post-finetune trait expression. CAFT (zero-ablate during train) helps evil/sycophancy more than hallucination.</p>
+</section>
+<section id="vogel">
+<p class="sec-label">04 · Sibling method</p>
+<h2>Vogel’s control vectors: same family, PCA + playful traits</h2>
+<p><strong>Theia Vogel</strong> (@voooooogel) popularized easy control vectors via <code>repeng</code> and the 2024 Mistral “acid trip” post. Method: contrastive pairs → relative hidden states → <strong>single-component PCA</strong> per layer → add coefficient at inference.</p>
+<ul class="plain">
+  <li>2026-10-01: persona / concept / belief / task vectors are one family (mean-diff, PCA, SAE, …).</li>
+  <li>Mean difference cancels shared distractors: <code>(distress + age) − (calm + age) ≈ distress</code>.</li>
+  <li>Failure modes: huge coef → collapse; entanglement; check prompt/sampler/random-vector controls.</li>
+  <li>Steering can jailbreak weak safety prompts; hard to jailbreak <em>out of</em> a strong vector.</li>
+</ul>
+</section>
+<section id="models">
+<p class="sec-label">05 · Shortlist</p>
+<h2>Four instruct picks, including Gemma 3; Qwen3.8-27B and Bonsai both real</h2>
+<p><strong>Qwen3.8-27B</strong> exists as <a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen/Qwen3.8-27B</a> (~27.8B post-trained VLM, Apache-2.0) — the “3.8” is the series name, not 3.8B params. <strong>Bonsai</strong> is Prism ML’s ternary pack of that model (e.g. <a href="https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf">Ternary-Bonsai-2-27B-gguf</a>); great for local chat, poor for first-pass activation research.</p>
+<table>
+  <thead><tr><th>Pick</th><th>Model</th><th>Size</th><th>Why</th><th>GPU (BF16)</th></tr></thead>
+  <tbody>
+    <tr><td><span class="chip ok">A</span></td><td><a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</a></td><td>~7.6B</td><td>Paper baseline; Apache-2.0; known layers</td><td>~16&nbsp;GB (4090 / A10 / L4)</td></tr>
+    <tr><td><span class="chip ok">B</span></td><td><a href="https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B">NousResearch/Hermes-3-Llama-3.1-8B</a></td><td>~8.0B</td><td>Instruct + roleplay-capable; character angle</td><td>~16–20&nbsp;GB</td></tr>
+    <tr><td><span class="chip warn">C</span></td><td><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen/Qwen3.8-27B</a></td><td>~27.8B</td><td>Newest dense post-train; stretch compute</td><td>~54&nbsp;GB+ (A100 80GB); FP8/AWQ for 24–48&nbsp;GB</td></tr>
+    <tr>
+      <td><span class="chip ok">D</span></td>
+      <td><a href="https://huggingface.co/google/gemma-3-12b-it">google/gemma-3-12b-it</a></td>
+      <td>~12.2B</td>
+      <td>Latest Gemma 3 instruct in-band; existing persona-vector artifacts; gated Gemma license</td>
+      <td>~24&nbsp;GB BF16 (4090 / A5000); AWQ ~12–16&nbsp;GB</td>
+    </tr>
+  </tbody>
+</table>
+<p>Paper also used <a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.1-8B-Instruct</a>. Community RP alt: <a href="https://huggingface.co/vicgalle/Humanish-Roleplay-Llama-3.1-8B">Humanish-Roleplay-Llama-3.1-8B</a>.</p>
+<p><strong>Gemma Scope:</strong> DeepMind’s open JumpReLU SAE suite for <em>Gemma 2</em> (2B/9B full; select 27B), including <a href="https://huggingface.co/google/gemma-scope-9b-it-res">gemma-scope-9b-it-res</a>. Base SAEs transfer well to IT. Pair SAE work with <a href="https://huggingface.co/google/gemma-2-9b-it">gemma-2-9b-it</a> (~9.2B); Gemma 3 has no full Scope suite yet. Stretch: <a href="https://huggingface.co/google/gemma-3-27b-it">gemma-3-27b-it</a> (~27.4B).</p>
+
+</section>
+<section id="plan">
+<p class="sec-label">06 · Next</p>
+<h2>Replicate paper vectors on A, then character traits on B</h2>
+<ol class="steps">
+  <li>Clone <code>safety-research/persona_vectors</code>; extract evil / sycophancy / hallucination on Qwen2.5-7B-Instruct; match layer picks.</li>
+  <li>Repeat on Hermes-3-8B with character traits (loyalty, theatricality, in-character refusal).</li>
+  <li>Optional: Qwen3.8-27B once a large GPU is free — same pipeline, expect different best layers.</li>
+  <li>Skip Bonsai for vector fitting; use it only if you need cheap generation later.</li>
+</ol>
+</section>
+<section id="sources">
+<p class="sec-label">07 · Sources</p>
+<h2>Primary links</h2>
+<ul class="plain">
+  <li>Anthropic: <a href="https://www.anthropic.com/research/persona-vectors">blog</a> · <a href="https://arxiv.org/abs/2507.21509">arXiv:2507.21509</a> · <a href="https://github.com/safety-research/persona_vectors">code</a></li>
+  <li>Vogel: <a href="https://vgel.me/posts/representation-engineering/">Mistral control-vector post</a> · <a href="https://x.com/voooooogel/status/2105793927035093490">2026-10-01 intuitions</a> · <code>repeng</code></li>
+  <li>Skill: <a href="https://github.com/nicobailon/visual-explainer">nicobailon/visual-explainer</a></li>
+</ul>
+</section>
+<footer>Built for Josh Cho · /workspace/persona-vectors · English · Paper register (visual-explainer) · not published</footer>
+</main>
+</body>
+</html>

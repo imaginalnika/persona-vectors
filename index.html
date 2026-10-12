@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Persona Vectors — Instruct Models (Josh Cho)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=Atkinson+Hyperlegible+Next:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f7f7f4;--text:#17191c;--dim:#575c63;--accent:#2c4cd0;--border:#e3e3dc;--surface:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#111316;--text:#e8e8e3;--dim:#9ba1a9;--accent:#93a6ff;--border:#262a30;--surface:#181b1f}}
+*{box-sizing:border-box}body{margin:0;font-family:"Atkinson Hyperlegible Next",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+main{max-width:42rem;margin:0 auto;padding:3rem 1.5rem 4rem}
+h1{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:2.2rem;letter-spacing:-0.03em;margin:0 0 .75rem}
+.deck{color:var(--dim);margin:0 0 2rem}
+ul{list-style:none;padding:0;margin:0}
+li{border-top:1px solid var(--border);padding:1rem 0}
+li:last-child{border-bottom:1px solid var(--border)}
+a{color:var(--accent);text-decoration:none;font-weight:600}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-right:.5rem}
+.meta{font-size:.9rem;color:var(--dim);margin-top:.25rem}
+footer{margin-top:2.5rem;font-size:.85rem;color:var(--dim)}
+</style>
+</head>
+<body>
+<main>
+<h1>Persona vectors on instruct models</h1>
+<p class="deck">Research brief for Josh Cho · updated 2026-10-12 JST · shortlist includes Qwen2.5-7B, Hermes-3-8B, Qwen3.8-27B, and <strong>Gemma 3 12B IT</strong>.</p>
+<ul>
+  <li><span class="tag">EN</span><a href="en.html">English explainer</a><div class="meta">visual-explainer skill · full shortlist + Gemma Scope note</div></li>
+  <li><span class="tag">KO-A</span><a href="ko-a-from-scratch.html">한국어 원작</a><div class="meta">연구 노트에서 처음부터 작성 (번역 아님)</div></li>
+  <li><span class="tag">KO-B</span><a href="ko-b-my-translation.html">한국어 번역 (직접)</a><div class="meta">영어 문서 번역</div></li>
+  <li><span class="tag">KO-C</span><a href="ko-c-gpt4o-translation.html">한국어 번역 (GPT-4o)</a><div class="meta">OpenRouter openai/gpt-4o</div></li>
+  <li><span class="tag">KO-D</span><a href="ko-d-gpt4o-selfgen-1.html">한국어 자체생성 1 (GPT-4o)</a><div class="meta">사실 노트만 · 영문/타한국어 미제공</div></li>
+  <li><span class="tag">KO-E</span><a href="ko-e-gpt4o-selfgen-2.html">한국어 자체생성 2 (GPT-4o)</a><div class="meta">사실 노트만 · 별도 컨텍스트</div></li>
+</ul>
+<footer>Not a product page · sources in each document · <a href="https://github.com/imaginalnika/persona-vectors">source repo</a></footer>
+</main>
+</body>
+</html>
